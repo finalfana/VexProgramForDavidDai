@@ -1,4 +1,8 @@
-#include "main.h"
+#include "pros/llemu.hpp"
+
+#include "RopoDevice.hpp"
+#include "RopoController.hpp"
+#include "OpControl.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -22,11 +26,10 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
+void initialize() 
+{
+	Motors::LeftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+	Motors::RightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
 }
 
 /**
@@ -73,21 +76,16 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
-
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
-
-		left_mtr = left;
-		right_mtr = right;
-
+void opcontrol() 
+{
+	pros::Controller MyController(pros::E_CONTROLLER_MASTER);
+	RopoController::AxisValueCast AxisLeftX (MyController, pros::E_CONTROLLER_ANALOG_LEFT_X, RopoController::Exp);
+	RopoController::AxisValueCast AxisLeftY (MyController, pros::E_CONTROLLER_ANALOG_LEFT_Y, RopoController::Exp);
+	DifferentialChassisOpControl::ChassisOpControl MyChassisOpControl (Motors::LeftMotors, Motors::RightMotors, AxisLeftX, AxisLeftY);
+	
+	while (true)
+	{
+		MyChassisOpControl.DetectAndMove();
 		pros::delay(20);
 	}
 }
