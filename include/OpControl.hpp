@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 
-namespace DifferentialChassisOpControl
+namespace OpControl
 {
     class ChassisOpControl
     {

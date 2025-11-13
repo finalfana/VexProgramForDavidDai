@@ -1,5 +1,4 @@
 #include "pros/llemu.hpp"
-
 #include "RopoDevice.hpp"
 #include "RopoController.hpp"
 #include "OpControl.hpp"
@@ -30,6 +29,8 @@ void initialize()
 {
 	Motors::LeftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
 	Motors::RightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+	Motors::LiftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+	Motors::SelectMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 }
 
 /**
@@ -81,7 +82,7 @@ void opcontrol()
 	pros::Controller MyController(pros::E_CONTROLLER_MASTER);
 	RopoController::AxisValueCast AxisLeftX (MyController, pros::E_CONTROLLER_ANALOG_LEFT_X, RopoController::Exp);
 	RopoController::AxisValueCast AxisLeftY (MyController, pros::E_CONTROLLER_ANALOG_LEFT_Y, RopoController::Exp);
-	DifferentialChassisOpControl::ChassisOpControl MyChassisOpControl (Motors::LeftMotors, Motors::RightMotors, AxisLeftX, AxisLeftY);
+	OpControl::ChassisOpControl MyChassisOpControl (Motors::LeftMotors, Motors::RightMotors, AxisLeftX, AxisLeftY);
 	
 	while (true)
 	{
