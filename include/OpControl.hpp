@@ -31,8 +31,8 @@ namespace OpControl
                 double LeftSpeed = LeftAxisY.GetAxisValue() + LeftAxisX.GetAxisValue();
                 double RightSpeed = LeftAxisY.GetAxisValue() - LeftAxisX.GetAxisValue();
 
-                LeftMotors.move_velocity(LeftSpeed * 600);
-                RightMotors.move_velocity(RightSpeed * 600);
+                LeftMotors.move_velocity(LeftSpeed * 600);//待定数据
+                RightMotors.move_velocity(RightSpeed * 600);//待定数据
             }
         }
 
