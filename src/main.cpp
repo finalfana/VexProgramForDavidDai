@@ -1,7 +1,7 @@
+#include "Devices.hpp"
+#include "project.hpp"
 #include "pros/llemu.hpp"
-#include "RopoDevice.hpp"
-#include "RopoController.hpp"
-#include "OpControl.hpp"
+#include "pros/misc.h"
 
 /**
  * A callback function for LLEMU's center button.
@@ -82,7 +82,12 @@ void opcontrol()
 	pros::Controller MyController(pros::E_CONTROLLER_MASTER);
 	RopoController::AxisValueCast AxisLeftX (MyController, pros::E_CONTROLLER_ANALOG_LEFT_X, RopoController::Exp);
 	RopoController::AxisValueCast AxisLeftY (MyController, pros::E_CONTROLLER_ANALOG_LEFT_Y, RopoController::Exp);
+	RopoController::ButtonTaskLine ButtonLine (MyController);
 	OpControl::ChassisOpControl MyChassisOpControl (Motors::LeftMotors, Motors::RightMotors, AxisLeftX, AxisLeftY);
+	OpControl::ScraperOpControl MyScraperOpControl (Motors::ScraperPiston);
+
+	ButtonLine.AddButtonDetect(pros::E_CONTROLLER_DIGITAL_R1, RopoController::Rising, MyScraperOpControl.LiftScraper, &MyScraperOpControl);
+	ButtonLine.AddButtonDetect(pros::E_CONTROLLER_DIGITAL_R2, RopoController::Rising, MyScraperOpControl.LowerScraper, &MyScraperOpControl);
 	
 	while (true)
 	{
