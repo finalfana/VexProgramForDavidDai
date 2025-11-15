@@ -5,8 +5,20 @@
 #include "pros/imu.hpp"
 #include "pros/optical.hpp"
 #include "pros/adi.hpp"
+#include <sys/types.h>
 #include <vector>
 #include <cmath>
+
+// 距离单位统一为m，统一使用°作为角度单位，统一使用ms作为时间单位
+namespace RopoConfig
+{
+    constexpr double AxisDeadzone = 0.05;//待定数据
+    constexpr double WheelDiameter = 0.104;//待定数据
+    constexpr double WheelCircumference = WheelDiameter * M_PI;//待定数据
+    constexpr double PosTolerance = 0.005;//待定数据
+    constexpr double AngleTolerance = 0.05;//待定数据
+    constexpr double MaxPower = 127.0;//待定数据
+};
 
 namespace RopoController
 {
@@ -24,7 +36,6 @@ namespace RopoController
         pros::Controller &MyController;
         pros::controller_analog_e_t Axis;
         AxisCastType CastMode;
-        double AxisDeadzone;;
 
     public:
         AxisValueCast(pros::Controller &_MyController,pros::controller_analog_e_t _Axis, AxisCastType _CastMode);
@@ -84,18 +95,45 @@ namespace RopoController
 
 namespace Autonomous
 {
+    struct PID
+    {
+        double kP;
+        double kI;
+        double kD;
+        double integral_limit;
+
+        PID(double _kP, double _kI, double _kD, double _integral_limit);
+    };
+
+    struct PositionData
+    {
+        double x;
+        double y;
+        double angle;
+    };
+
     class ChassisAutonomous
     {
     private:
         pros::MotorGroup &LeftMotors;
         pros::MotorGroup &RightMotors;
         pros::IMU &Gyro;
-        double PositionX, PositionY, Angle;
+        PositionData MyPosition;
         double BeginTime;
 
     public:
+        // 坐标系以机器人初始朝向为x轴正方向,机器人的角度为和x轴正半轴的夹角,逆时针为正,范围为[-180,180) 
         ChassisAutonomous(pros::MotorGroup &_LeftMotors, pros::MotorGroup &_RightMotors, pros::IMU &_Gyro);
         void Initialize();
+        double DegreeToRad(double degree);
+        double RadToDegree(double rad);
+        double DegreeToDistance(double degree);
+        double DistanceToDegree(double distance);
+        double GetCurrentAngle();
+        double NormalizeAngle(double angle);//将角度规范到[-180,180)范围内
+        void MoveDistance(double TargetDistance);//以m作为单位
+        void MoveAngleAbsolute(double TargetAngle);
+        void MovePositionAbsolute(double TargetX, double TargetY);
         void PrintLog();
     };
 }

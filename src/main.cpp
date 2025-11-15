@@ -1,5 +1,5 @@
 #include "Devices.hpp"
-#include "project.hpp"
+#include "Project.hpp"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 
@@ -31,6 +31,9 @@ void initialize()
 	Motors::RightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
 	Motors::LiftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
 	Motors::SelectMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+	Autonomous::ChassisAutonomous MyChassisAutonomous (Motors::LeftMotors, Motors::RightMotors, Sensors::GyroSensor);
+	MyChassisAutonomous.Initialize();
 }
 
 /**
@@ -84,7 +87,7 @@ void opcontrol()
 	RopoController::AxisValueCast AxisLeftY (MyController, pros::E_CONTROLLER_ANALOG_LEFT_Y, RopoController::Exp);
 	RopoController::ButtonTaskLine ButtonLine (MyController);
 	OpControl::ChassisOpControl MyChassisOpControl (Motors::LeftMotors, Motors::RightMotors, AxisLeftX, AxisLeftY);
-	OpControl::ScraperOpControl MyScraperOpControl (Motors::ScraperPiston);
+	OpControl::ScraperOpControl MyScraperOpControl (ThreeWires::ScraperPiston);
 
 	ButtonLine.AddButtonDetect(pros::E_CONTROLLER_DIGITAL_R1, RopoController::Rising, MyScraperOpControl.LiftScraper, &MyScraperOpControl);
 	ButtonLine.AddButtonDetect(pros::E_CONTROLLER_DIGITAL_R2, RopoController::Rising, MyScraperOpControl.LowerScraper, &MyScraperOpControl);
@@ -92,6 +95,6 @@ void opcontrol()
 	while (true)
 	{
 		MyChassisOpControl.DetectAndMove();
-		pros::delay(20);
+		pros::delay(10);
 	}
 }

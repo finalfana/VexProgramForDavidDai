@@ -1,4 +1,4 @@
-#include "project.hpp"
+#include "Project.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 #include <vector>
@@ -7,7 +7,7 @@
 namespace RopoController
 {
     AxisValueCast::AxisValueCast(pros::Controller &_MyController,pros::controller_analog_e_t _Axis, AxisCastType _CastMode)
-        : MyController(_MyController), Axis(_Axis), CastMode(_CastMode), AxisDeadzone(0.05){}
+        : MyController(_MyController), Axis(_Axis), CastMode(_CastMode){}
 
     float AxisValueCast::GetAxisValue()
     {
@@ -45,14 +45,14 @@ namespace RopoController
     float AxisValueCast::GetDeadzone()
     {
         if (CastMode == Linear || CastMode == SlowLimitLinear)
-            return AxisDeadzone;
+            return RopoConfig::AxisDeadzone;
 
         else if (CastMode == Exp)
-            return (exp(AxisDeadzone) - 1) / (exp(1)-1);
+            return (exp(RopoConfig::AxisDeadzone) - 1) / (exp(1)-1);
 
         else if (CastMode == Ln)
-            return log(AxisDeadzone + 1) / log(2);
-        return AxisDeadzone;
+            return log(RopoConfig::AxisDeadzone + 1) / log(2);
+        return RopoConfig::AxisDeadzone;
     }
 
     void ButtonTaskCore::Trigger()

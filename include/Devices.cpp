@@ -17,7 +17,14 @@ namespace Motors
     pros::MotorGroup LeftMotors({LeftBackMotor, LeftFrontMotor});
     pros::MotorGroup RightMotors({RightBackMotor, RightFrontMotor});
     pros::MotorGroup LiftMotors({LiftMotor1, LiftMotor2, LiftMotor3});
+}
 
+namespace ThreeWires
+{
     pros::ADIDigitalOut ScraperPiston('A'); //待定数据
 }
 
+namespace Sensors
+{
+    pros::IMU GyroSensor(9); //待定数据
+}

@@ -1,3 +1,4 @@
+#include "pros/imu.hpp"
 #include "pros/motors.hpp"
 #include "pros/adi.hpp"
 
@@ -21,6 +22,14 @@ namespace Motors
     extern pros::MotorGroup LeftMotors;
     extern pros::MotorGroup RightMotors;
     extern pros::MotorGroup LiftMotors;
+}
 
+namespace ThreeWires
+{
     extern pros::ADIDigitalOut ScraperPiston; 
+}
+
+namespace Sensors
+{
+    extern pros::IMU GyroSensor;
 }
